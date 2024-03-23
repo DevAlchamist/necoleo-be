@@ -8,27 +8,36 @@ const ErrorHandler = require("../middlewares/error.middlewares"); // error handl
 const { UserRouter } = require("../routes/users.routes");
 
 module.exports = (app) => {
- app.use(express.json({ limit: "9999000009mb" }));
- app.use(express.urlencoded({ extended: true }));
+  app.use(express.json({ limit: "9999000009mb" }));
+  app.use(express.urlencoded({ extended: true }));
 
- // Conditional middleware for development environment
-//  if (process.env.NODE_ENV !== 'production') {
-//     app.use(morgan("tiny")); // initiating console api requests
-//  }
+  // Conditional middleware for development environment
+  //  if (process.env.NODE_ENV !== 'production') {
+  //     app.use(morgan("tiny")); // initiating console api requests
+  //  }
 
- app.use(helmet());
- app.use(cors());
+  app.use(helmet());
+  const allowedOrigins = ["https://necoleo-be.vercel.app/", "*"]; // Add your allowed URLs here
+  const corsOptions = {
+    origin: function (origin, callback) {
+      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+  };
+  app.use(cors(corsOptions));
+  //start of routes
+  app.use("/", UserRouter);
 
- //start of routes
- app.use("/", UserRouter);
-
- // handling async errors in api routes
- app.use(ErrorHandler);
- app.get("*", (req, res) =>
+  // handling async errors in api routes
+  app.use(ErrorHandler);
+  app.get("*", (req, res) =>
     res
       .status(404)
       .send({ error: true, message: "Route not Found!", result: null })
- );
+  );
 };
 
 console.log("🛣️ Routes setup completed");
