@@ -17,7 +17,7 @@ module.exports = (app) => {
   //  }
 
   app.use(helmet());
-  const allowedOrigins = ["https://necoleo-be.vercel.app/", "*"]; // Add your allowed URLs here
+  const allowedOrigins = ["https://necoleo-fe.vercel.app/", "*"]; // Add your allowed URLs here
   const corsOptions = {
     origin: function (origin, callback) {
       if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
